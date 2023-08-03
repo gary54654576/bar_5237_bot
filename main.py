@@ -14,5 +14,5 @@ if __name__ == "__main__":
 
     google_drive_api = GoogleDriveAPI(credentials_file)
     google_sheets_api = GoogleSheetsAPI(credentials_file, spreadsheet_id)
-    bot = BarBot(bot_token, admin_chat_id, google_sheets_api, google_drive_api)
+    bot = BarBot(bot_token, google_sheets_api, google_drive_api)
     bot.start_polling()

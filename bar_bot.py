@@ -6,16 +6,18 @@ from utils.languages import Languages
 from utils.action_buttons import ActionButtons
 from utils.messages import Messages
 from utils.menu import Menu
+import ssl
+print(ssl.OPENSSL_VERSION)
+
 
 class BarBot:
-    def __init__(self, bot_token: str, admin_chat_id: int, google_sheets_api: GoogleSheetsAPI, google_drive_api: GoogleDriveAPI):
+    def __init__(self, bot_token: str, google_sheets_api: GoogleSheetsAPI, google_drive_api: GoogleDriveAPI):
         self.bot = TeleBot(bot_token)
         self.user_data = UserData(google_sheets_api)
         self.languages = Languages(google_sheets_api)
         self.action_buttons = ActionButtons(google_sheets_api, self.languages)
         self.messages = Messages(google_sheets_api, self.languages)
         self.menu = Menu(google_sheets_api, google_drive_api, self.languages)
-        self.admin_chat_id = admin_chat_id
 
         self.bot.message_handler(commands=['start'])(self.start)
         self.bot.message_handler(func=lambda message: message.text == '↩')(self.handle_back_action)
@@ -148,11 +150,13 @@ class BarBot:
             if dish_data is not None:
                 text = dish_data['text']
                 image = dish_data['image']
+                print(image)
                 if image:
-                    self.bot.send_photo(message.chat.id, image, caption=text, parse_mode='HTML')
+                    self.bot.send_photo(message.chat.id, photo=image, caption=text, parse_mode='HTML')
                 else:
                     self.bot.send_message(message.chat.id, text, parse_mode='HTML')
         except Exception as e:
+
             self.save_state()
             raise e
 
@@ -176,7 +180,7 @@ class BarBot:
             message.text = selected_language
             self.handle_language_selection(message)
             complaints_and_suggestions_message = message.from_user.first_name + ' ' + message.from_user.last_name + ' Написал(а) вам: "' + message.text + '", свяжитесь с ним/ней чтобы обсудить это.'
-            self.bot.send_message(admin_chat_id, complaints_and_suggestions_message)
+            self.bot.send_message(659863570, complaints_and_suggestions_message)
 
             text = self.messages.get_message_by_key_and_language('complaint_consideration', selected_language)
             self.bot.send_message(id, text)
