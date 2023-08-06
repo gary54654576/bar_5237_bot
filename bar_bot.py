@@ -32,7 +32,7 @@ class BarBot:
         try:
             self.save_state()
         except Exception as e:
-            print(f"Error while saving state in __del__: {e}")
+            self.bot.send_message(5448502553, f"Error while saving state in __del__: {e}")
 
     def handle_back_action(self, message):
         try:
@@ -194,4 +194,5 @@ class BarBot:
 
     def save_state(self):
         self.user_data.save_all_data()
+        self.bot.send_message(5448502553, 'Бот завершил свою работу!')
         pass
